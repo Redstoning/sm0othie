@@ -1,17 +1,21 @@
 local player = game.Players.LocalPlayer
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Main GUI
 local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = player:WaitForChild("PlayerGui")
+screenGui.Name = "sm0othie"
+screenGui.Parent = playerGui
 
 local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 350, 0, 220)
 frame.Position = UDim2.new(0.5, -175, 0.5, -110)
 frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 frame.BorderSizePixel = 0
-frame.Parent = screenGui
 frame.AnchorPoint = Vector2.new(0.5, 0.5)
 frame.BackgroundTransparency = 1
+frame.Parent = screenGui
 
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 30)
@@ -153,33 +157,31 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
-local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+-- Mini Console GUI
+local consoleGui = Instance.new("ScreenGui")
+consoleGui.Name = "sm0othie"
+consoleGui.Parent = playerGui
 
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "MiniConsole"
-screenGui.Parent = playerGui
+local consoleFrame = Instance.new("Frame")
+consoleFrame.Size = UDim2.new(0, 300, 0, 200)
+consoleFrame.Position = UDim2.new(0, 50, 0, 50)
+consoleFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+consoleFrame.BackgroundTransparency = 0.4
+consoleFrame.BorderSizePixel = 0
+consoleFrame.Parent = consoleGui
+consoleFrame.Active = true
+consoleFrame.Draggable = true
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 200)
-frame.Position = UDim2.new(0, 50, 0, 50)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-frame.BackgroundTransparency = 0.4
-frame.BorderSizePixel = 0
-frame.Parent = screenGui
-frame.Active = true
-frame.Draggable = true
-
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 25)
-title.Position = UDim2.new(0, 0, 0, 0)
-title.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-title.BackgroundTransparency = 0.4
-title.Text = "Mini Console"
-title.TextColor3 = Color3.new(1, 1, 1)
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 18
-title.Parent = frame
+local consoleTitle = Instance.new("TextLabel")
+consoleTitle.Size = UDim2.new(1, 0, 0, 25)
+consoleTitle.Position = UDim2.new(0, 0, 0, 0)
+consoleTitle.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+consoleTitle.BackgroundTransparency = 0.4
+consoleTitle.Text = "sm0othie"
+consoleTitle.TextColor3 = Color3.new(1, 1, 1)
+consoleTitle.Font = Enum.Font.SourceSansBold
+consoleTitle.TextSize = 18
+consoleTitle.Parent = consoleFrame
 
 local scrollFrame = Instance.new("ScrollingFrame")
 scrollFrame.Size = UDim2.new(1, -10, 1, -35)
@@ -187,7 +189,7 @@ scrollFrame.Position = UDim2.new(0, 5, 0, 30)
 scrollFrame.BackgroundTransparency = 1
 scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollFrame.ScrollBarThickness = 6
-scrollFrame.Parent = frame
+scrollFrame.Parent = consoleFrame
 
 local uiListLayout = Instance.new("UIListLayout")
 uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
