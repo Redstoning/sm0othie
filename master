@@ -2,29 +2,45 @@ local player=game.Players.LocalPlayer
 local TweenService=game:GetService("TweenService")
 local UserInputService=game:GetService("UserInputService")
 local playerGui=player:WaitForChild("PlayerGui")
-for _,gui in pairs(playerGui:GetChildren())do if gui:IsA("ScreenGui") and gui.Name=="sm0othie" then gui:Destroy() end end
-local screenGui=Instance.new("ScreenGui")
-screenGui.Name="sm0othie"
-screenGui.Parent=playerGui
-local frame=Instance.new("Frame")
-frame.Size=UDim2.new(0,350,0,220)
-frame.Position=UDim2.new(0.5,-175,0.5,-110)
-frame.BackgroundColor3=Color3.fromRGB(30,30,30)
-frame.BackgroundTransparency=0.2
-frame.BorderSizePixel=0
-frame.AnchorPoint=Vector2.new(0.5,0.5)
-frame.Parent=screenGui
-local title=Instance.new("TextLabel")
-title.Size=UDim2.new(1,0,0,30)
-title.Position=UDim2.new(0,0,0,0)
-title.BackgroundColor3=Color3.fromRGB(25,25,25)
-title.BackgroundTransparency=0.4
-title.Text="sm0othie"
-title.TextColor3=Color3.new(1,1,1)
-title.Font=Enum.Font.SourceSansBold
-title.TextSize=18
-title.TextScaled=true
-title.Parent=frame
+for _,gui in pairs(playerGui:GetChildren())do if gui:IsA("ScreenGui") and (gui.Name=="sm0othie" or gui.Name=="sm0othie_console") then gui:Destroy() end end
+
+local function createFrame(name,posX,posY,width,height,bgColor,bgTrans)
+	local gui=Instance.new("ScreenGui")
+	gui.Name=name
+	gui.Parent=playerGui
+	local frame=Instance.new("Frame")
+	frame.Size=UDim2.new(0,width,0,height)
+	frame.Position=UDim2.new(0,posX,0,posY)
+	frame.BackgroundColor3=bgColor
+	frame.BackgroundTransparency=bgTrans
+	frame.BorderSizePixel=0
+	frame.Active=true
+	frame.Draggable=true
+	frame.Parent=gui
+	return gui,frame
+end
+
+local utilGui,utilFrame=createFrame("sm0othie",50,50,350,220,Color3.fromRGB(30,30,30),0.2)
+local consoleGui,consoleFrame=createFrame("sm0othie_console",420,50,300,200,Color3.fromRGB(30,30,30),0.4)
+
+local function createTitle(frame,text)
+	local title=Instance.new("TextLabel")
+	title.Size=UDim2.new(1,0,0,30)
+	title.Position=UDim2.new(0,0,0,0)
+	title.BackgroundColor3=Color3.fromRGB(25,25,25)
+	title.BackgroundTransparency=0.4
+	title.Text=text
+	title.TextColor3=Color3.new(1,1,1)
+	title.Font=Enum.Font.SourceSansBold
+	title.TextSize=18
+	title.TextScaled=true
+	title.Parent=frame
+	return title
+end
+
+createTitle(utilFrame,"sm0othie")
+createTitle(consoleFrame,"sm0othie")
+
 local inputBox=Instance.new("TextBox")
 inputBox.Size=UDim2.new(0.8,0,0,30)
 inputBox.Position=UDim2.new(0.1,0,0.15,0)
@@ -32,7 +48,8 @@ inputBox.PlaceholderText="Enter fruit name"
 inputBox.Text=""
 inputBox.TextColor3=Color3.fromRGB(255,255,255)
 inputBox.BackgroundColor3=Color3.fromRGB(60,60,60)
-inputBox.Parent=frame
+inputBox.Parent=utilFrame
+
 local resultLabel=Instance.new("TextLabel")
 resultLabel.Size=UDim2.new(1,0,0,20)
 resultLabel.Position=UDim2.new(0,0,0.35,0)
@@ -40,81 +57,52 @@ resultLabel.BackgroundTransparency=1
 resultLabel.TextColor3=Color3.fromRGB(255,255,255)
 resultLabel.TextScaled=true
 resultLabel.Text=""
-resultLabel.Parent=frame
+resultLabel.Parent=utilFrame
+
 local function getFruitsFolder()return workspace:FindFirstChild("Fruits")end
-local cloneBtn=Instance.new("TextButton")
-cloneBtn.Size=UDim2.new(0.8,0,0,30)
-cloneBtn.Position=UDim2.new(0.1,0,0.45,0)
-cloneBtn.Text="Clone Fruit"
-cloneBtn.TextColor3=Color3.fromRGB(255,255,255)
-cloneBtn.BackgroundColor3=Color3.fromRGB(80,80,80)
-cloneBtn.Parent=frame
-local refreshBtn=Instance.new("TextButton")
-refreshBtn.Size=UDim2.new(0.8,0,0,30)
-refreshBtn.Position=UDim2.new(0.1,0,0.6,0)
-refreshBtn.Text="Refresh Fruits"
-refreshBtn.TextColor3=Color3.fromRGB(255,255,255)
-refreshBtn.BackgroundColor3=Color3.fromRGB(80,80,80)
-refreshBtn.Parent=frame
-local printBtn=Instance.new("TextButton")
-printBtn.Size=UDim2.new(0.8,0,0,30)
-printBtn.Position=UDim2.new(0.1,0,0.75,0)
-printBtn.Text="Print Fruits"
-printBtn.TextColor3=Color3.fromRGB(255,255,255)
-printBtn.BackgroundColor3=Color3.fromRGB(80,80,80)
-printBtn.Parent=frame
+
+local function createButton(frame,posY,text)
+	local btn=Instance.new("TextButton")
+	btn.Size=UDim2.new(0.8,0,0,30)
+	btn.Position=UDim2.new(0.1,0,posY,0)
+	btn.Text=text
+	btn.TextColor3=Color3.fromRGB(255,255,255)
+	btn.BackgroundColor3=Color3.fromRGB(80,80,80)
+	btn.Parent=frame
+	return btn
+end
+
+local cloneBtn=createButton(utilFrame,0.45,"Clone Fruit")
+local refreshBtn=createButton(utilFrame,0.6,"Refresh Fruits")
+local printBtn=createButton(utilFrame,0.75,"Print Fruits")
+
 cloneBtn.MouseButton1Click:Connect(function()
-local fruitName=inputBox.Text
-local fruitsFolder=getFruitsFolder()
-if not fruitsFolder then resultLabel.Text="Fruits folder not found" return end
-local original=fruitsFolder:FindFirstChild(fruitName)
-if not original then resultLabel.Text="Fruit not found" return end
-local clone=original:Clone()
-clone.Parent=fruitsFolder
-if clone and clone.Parent==fruitsFolder then resultLabel.Text="Clone Successful" else resultLabel.Text="Clone Failed" end
+	local fruitName=inputBox.Text
+	local fruitsFolder=getFruitsFolder()
+	if not fruitsFolder then resultLabel.Text="Fruits folder not found" return end
+	local original=fruitsFolder:FindFirstChild(fruitName)
+	if not original then resultLabel.Text="Fruit not found" return end
+	local clone=original:Clone()
+	clone.Parent=fruitsFolder
+	if clone and clone.Parent==fruitsFolder then resultLabel.Text="Clone Successful" else resultLabel.Text="Clone Failed" end
 end)
+
 refreshBtn.MouseButton1Click:Connect(function()
-local fruitsFolder=getFruitsFolder()
-if not fruitsFolder then resultLabel.Text="Fruits folder not found" return end
-for _,v in pairs(fruitsFolder:GetChildren())do if v~=fruitsFolder:FindFirstChild(inputBox.Text)then v:Destroy() end end
-resultLabel.Text="Local fruits refreshed"
+	local fruitsFolder=getFruitsFolder()
+	if not fruitsFolder then resultLabel.Text="Fruits folder not found" return end
+	for _,v in pairs(fruitsFolder:GetChildren())do if v~=fruitsFolder:FindFirstChild(inputBox.Text)then v:Destroy() end end
+	resultLabel.Text="Local fruits refreshed"
 end)
+
 printBtn.MouseButton1Click:Connect(function()
-local fruitsFolder=getFruitsFolder()
-if not fruitsFolder then resultLabel.Text="Fruits folder not found" return end
-local names={}
-for _,v in pairs(fruitsFolder:GetChildren())do table.insert(names,v.Name)end
-print("Current fruits:",table.concat(names,", "))
-resultLabel.Text="Fruits printed to console"
+	local fruitsFolder=getFruitsFolder()
+	if not fruitsFolder then resultLabel.Text="Fruits folder not found" return end
+	local names={}
+	for _,v in pairs(fruitsFolder:GetChildren())do table.insert(names,v.Name)end
+	print("Current fruits:",table.concat(names,", "))
+	resultLabel.Text="Fruits printed to console"
 end)
-TweenService:Create(frame,TweenInfo.new(1.2,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{BackgroundTransparency=0.2}):Play()
-local dragging,dragInput,dragStart,startPos=false,nil,nil,nil
-local function update(input)local delta=input.Position-dragStart frame.Position=UDim2.new(startPos.X.Scale,startPos.X.Offset+delta.X,startPos.Y.Scale,startPos.Y.Offset+delta.Y)end
-frame.InputBegan:Connect(function(input)if input.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true dragStart=input.Position startPos=frame.Position input.Changed:Connect(function()if input.UserInputState==Enum.UserInputState.End then dragging=false end end)end end)
-frame.InputChanged:Connect(function(input)if input.UserInputType==Enum.UserInputType.MouseMovement then dragInput=input end end)
-UserInputService.InputChanged:Connect(function(input)if input==dragInput and dragging then update(input)end end)
-local consoleGui=Instance.new("ScreenGui")
-consoleGui.Name="sm0othie_console"
-consoleGui.Parent=playerGui
-local consoleFrame=Instance.new("Frame")
-consoleFrame.Size=UDim2.new(0,300,0,200)
-consoleFrame.Position=UDim2.new(0,50,0,50)
-consoleFrame.BackgroundColor3=Color3.fromRGB(30,30,30)
-consoleFrame.BackgroundTransparency=0.4
-consoleFrame.BorderSizePixel=0
-consoleFrame.Parent=consoleGui
-consoleFrame.Active=true
-consoleFrame.Draggable=true
-local consoleTitle=Instance.new("TextLabel")
-consoleTitle.Size=UDim2.new(1,0,0,25)
-consoleTitle.Position=UDim2.new(0,0,0,0)
-consoleTitle.BackgroundColor3=Color3.fromRGB(25,25,25)
-consoleTitle.BackgroundTransparency=0.4
-consoleTitle.Text="sm0othie"
-consoleTitle.TextColor3=Color3.new(1,1,1)
-consoleTitle.Font=Enum.Font.SourceSansBold
-consoleTitle.TextSize=18
-consoleTitle.Parent=consoleFrame
+
 local scrollFrame=Instance.new("ScrollingFrame")
 scrollFrame.Size=UDim2.new(1,-10,1,-35)
 scrollFrame.Position=UDim2.new(0,5,0,30)
@@ -122,14 +110,36 @@ scrollFrame.BackgroundTransparency=1
 scrollFrame.CanvasSize=UDim2.new(0,0,0,0)
 scrollFrame.ScrollBarThickness=6
 scrollFrame.Parent=consoleFrame
+
 local uiListLayout=Instance.new("UIListLayout")
 uiListLayout.SortOrder=Enum.SortOrder.LayoutOrder
 uiListLayout.Padding=UDim.new(0,2)
 uiListLayout.Parent=scrollFrame
-local function miniPrint(text)local label=Instance.new("TextLabel") label.Size=UDim2.new(1,0,0,20) label.BackgroundTransparency=1 label.TextColor3=Color3.new(1,1,1) label.Font=Enum.Font.SourceSans label.TextSize=16 label.TextXAlignment=Enum.TextXAlignment.Left label.Text=text label.Parent=scrollFrame scrollFrame.CanvasSize=UDim2.new(0,0,0,uiListLayout.AbsoluteContentSize.Y) scrollFrame.CanvasPosition=Vector2.new(0,scrollFrame.CanvasSize.Y.Offset) end
+
+local function miniPrint(text)
+	local label=Instance.new("TextLabel")
+	label.Size=UDim2.new(1,0,0,20)
+	label.BackgroundTransparency=1
+	label.TextColor3=Color3.new(1,1,1)
+	label.Font=Enum.Font.SourceSans
+	label.TextSize=16
+	label.TextXAlignment=Enum.TextXAlignment.Left
+	label.Text=text
+	label.Parent=scrollFrame
+	scrollFrame.CanvasSize=UDim2.new(0,0,0,uiListLayout.AbsoluteContentSize.Y)
+	scrollFrame.CanvasPosition=Vector2.new(0,scrollFrame.CanvasSize.Y.Offset)
+end
+
 miniPrint("Mini console initialized...")
 miniPrint("Loading data...")
 miniPrint("Player joined: "..player.Name)
+
 local oldPrint=print
-print=function(...) local args={...} local msg="" for i,v in ipairs(args)do msg=msg..tostring(v).." " end miniPrint(msg) oldPrint(...) end
+print=function(...)
+	local args={...}
+	local msg=""
+	for i,v in ipairs(args)do msg=msg..tostring(v).." " end
+	miniPrint(msg)
+	oldPrint(...)
+end
 print("This will appear in the mini console!")
