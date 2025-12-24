@@ -2,24 +2,27 @@ local player=game.Players.LocalPlayer
 local TweenService=game:GetService("TweenService")
 local UserInputService=game:GetService("UserInputService")
 local playerGui=player:WaitForChild("PlayerGui")
-for _,gui in pairs(playerGui:GetChildren())do if gui:IsA("ScreenGui")and(gui.Name=="sm0othie"or gui.Name=="FruitInjector")then gui:Destroy()end end
+for _,gui in pairs(playerGui:GetChildren())do if gui:IsA("ScreenGui") and gui.Name=="sm0othie" then gui:Destroy() end end
 local screenGui=Instance.new("ScreenGui")
 screenGui.Name="sm0othie"
 screenGui.Parent=playerGui
 local frame=Instance.new("Frame")
 frame.Size=UDim2.new(0,350,0,220)
 frame.Position=UDim2.new(0.5,-175,0.5,-110)
-frame.BackgroundColor3=Color3.fromRGB(40,40,40)
+frame.BackgroundColor3=Color3.fromRGB(30,30,30)
+frame.BackgroundTransparency=0.2
 frame.BorderSizePixel=0
 frame.AnchorPoint=Vector2.new(0.5,0.5)
-frame.BackgroundTransparency=1
 frame.Parent=screenGui
 local title=Instance.new("TextLabel")
 title.Size=UDim2.new(1,0,0,30)
 title.Position=UDim2.new(0,0,0,0)
-title.BackgroundTransparency=1
+title.BackgroundColor3=Color3.fromRGB(25,25,25)
+title.BackgroundTransparency=0.4
 title.Text="sm0othie"
-title.TextColor3=Color3.fromRGB(255,255,255)
+title.TextColor3=Color3.new(1,1,1)
+title.Font=Enum.Font.SourceSansBold
+title.TextSize=18
 title.TextScaled=true
 title.Parent=frame
 local inputBox=Instance.new("TextBox")
@@ -46,6 +49,20 @@ cloneBtn.Text="Clone Fruit"
 cloneBtn.TextColor3=Color3.fromRGB(255,255,255)
 cloneBtn.BackgroundColor3=Color3.fromRGB(80,80,80)
 cloneBtn.Parent=frame
+local refreshBtn=Instance.new("TextButton")
+refreshBtn.Size=UDim2.new(0.8,0,0,30)
+refreshBtn.Position=UDim2.new(0.1,0,0.6,0)
+refreshBtn.Text="Refresh Fruits"
+refreshBtn.TextColor3=Color3.fromRGB(255,255,255)
+refreshBtn.BackgroundColor3=Color3.fromRGB(80,80,80)
+refreshBtn.Parent=frame
+local printBtn=Instance.new("TextButton")
+printBtn.Size=UDim2.new(0.8,0,0,30)
+printBtn.Position=UDim2.new(0.1,0,0.75,0)
+printBtn.Text="Print Fruits"
+printBtn.TextColor3=Color3.fromRGB(255,255,255)
+printBtn.BackgroundColor3=Color3.fromRGB(80,80,80)
+printBtn.Parent=frame
 cloneBtn.MouseButton1Click:Connect(function()
 local fruitName=inputBox.Text
 local fruitsFolder=getFruitsFolder()
@@ -56,26 +73,12 @@ local clone=original:Clone()
 clone.Parent=fruitsFolder
 if clone and clone.Parent==fruitsFolder then resultLabel.Text="Clone Successful" else resultLabel.Text="Clone Failed" end
 end)
-local refreshBtn=Instance.new("TextButton")
-refreshBtn.Size=UDim2.new(0.8,0,0,30)
-refreshBtn.Position=UDim2.new(0.1,0,0.6,0)
-refreshBtn.Text="Refresh Fruits"
-refreshBtn.TextColor3=Color3.fromRGB(255,255,255)
-refreshBtn.BackgroundColor3=Color3.fromRGB(80,80,80)
-refreshBtn.Parent=frame
 refreshBtn.MouseButton1Click:Connect(function()
 local fruitsFolder=getFruitsFolder()
 if not fruitsFolder then resultLabel.Text="Fruits folder not found" return end
-for _,v in pairs(fruitsFolder:GetChildren())do if v~=fruitsFolder:FindFirstChild(inputBox.Text)then v:Destroy()end end
+for _,v in pairs(fruitsFolder:GetChildren())do if v~=fruitsFolder:FindFirstChild(inputBox.Text)then v:Destroy() end end
 resultLabel.Text="Local fruits refreshed"
 end)
-local printBtn=Instance.new("TextButton")
-printBtn.Size=UDim2.new(0.8,0,0,30)
-printBtn.Position=UDim2.new(0.1,0,0.75,0)
-printBtn.Text="Print Fruits"
-printBtn.TextColor3=Color3.fromRGB(255,255,255)
-printBtn.BackgroundColor3=Color3.fromRGB(80,80,80)
-printBtn.Parent=frame
 printBtn.MouseButton1Click:Connect(function()
 local fruitsFolder=getFruitsFolder()
 if not fruitsFolder then resultLabel.Text="Fruits folder not found" return end
@@ -84,15 +87,14 @@ for _,v in pairs(fruitsFolder:GetChildren())do table.insert(names,v.Name)end
 print("Current fruits:",table.concat(names,", "))
 resultLabel.Text="Fruits printed to console"
 end)
-frame.Position=UDim2.new(0.5,-175,0.5,-110)
-TweenService:Create(frame,TweenInfo.new(1.2,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{BackgroundTransparency=0}):Play()
+TweenService:Create(frame,TweenInfo.new(1.2,Enum.EasingStyle.Quad,Enum.EasingDirection.Out),{BackgroundTransparency=0.2}):Play()
 local dragging,dragInput,dragStart,startPos=false,nil,nil,nil
 local function update(input)local delta=input.Position-dragStart frame.Position=UDim2.new(startPos.X.Scale,startPos.X.Offset+delta.X,startPos.Y.Scale,startPos.Y.Offset+delta.Y)end
 frame.InputBegan:Connect(function(input)if input.UserInputType==Enum.UserInputType.MouseButton1 then dragging=true dragStart=input.Position startPos=frame.Position input.Changed:Connect(function()if input.UserInputState==Enum.UserInputState.End then dragging=false end end)end end)
 frame.InputChanged:Connect(function(input)if input.UserInputType==Enum.UserInputType.MouseMovement then dragInput=input end end)
 UserInputService.InputChanged:Connect(function(input)if input==dragInput and dragging then update(input)end end)
 local consoleGui=Instance.new("ScreenGui")
-consoleGui.Name="sm0othie"
+consoleGui.Name="sm0othie_console"
 consoleGui.Parent=playerGui
 local consoleFrame=Instance.new("Frame")
 consoleFrame.Size=UDim2.new(0,300,0,200)
@@ -106,7 +108,7 @@ consoleFrame.Draggable=true
 local consoleTitle=Instance.new("TextLabel")
 consoleTitle.Size=UDim2.new(1,0,0,25)
 consoleTitle.Position=UDim2.new(0,0,0,0)
-consoleTitle.BackgroundColor3=Color3.fromRGB(20,20,20)
+consoleTitle.BackgroundColor3=Color3.fromRGB(25,25,25)
 consoleTitle.BackgroundTransparency=0.4
 consoleTitle.Text="sm0othie"
 consoleTitle.TextColor3=Color3.new(1,1,1)
